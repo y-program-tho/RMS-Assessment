@@ -1,0 +1,119 @@
+import random
+import numpy as np
+
+# Step 1: Create Matrix
+default_matrix = np.mat([[8,2,22,97,38,15,0,40,0,75],
+                         [49,49,99,40,17,81,18,57,60,87],
+                         [81,49,31,73,55,79,14,29,93,71],
+                         [52,70,95,23,4,60,11,42,69,24],
+                         [22,31,16,71,51,67,63,89,41,92],
+                         [24,47,32,60,99,3,45,2,44,75],
+                         [32,98,81,28,64,23,67,10,26,38],
+                         [67,26,20,68,2,62,12,20,95,63],
+                         [24,55,58,5,66,73,99,26,97,17],
+                         [21,36,23,9,75,0,76,44,20,45]])
+
+# Creates matrices filled with random numbers from 0 to 99 of tehj desired dimensions
+# Simple input the number of columns and the number of rows you want
+def matrix_creator(no_of_cols, no_of_rows):
+    matrix = []
+    for n in range(0, no_of_cols):
+        matrix.append([])
+        for m in range(0, no_of_rows):
+            matrix[n].append(random.randint(0,99))
+            m += 1;
+        n += 1;
+    matrix = np.mat(matrix)
+    return matrix
+
+
+
+# Step 2: Create method used to find all combinations of adjacent values in groups of 3 
+# to a start point of three horizontal aligned values in the a matrix
+# matrix = matrix used to find adjacent values in groups of 3
+# row = row coordinate of 2nd value of the starting sequence
+# col = column coordinate of 2nd value of the starting sequence
+def highest_adj_product(matrix, row, col):
+    
+    highest_prod = 0
+    adj_direction = ""
+    start_pos = [sample[row, col-1], sample[row, col], sample[row, col+1]]
+    
+    adj_directions = ['left_adj', 
+                      'right_adj', 
+                      'up_adj', 
+                      'down_adj', 
+                      'left_upper_diag_adj', 
+                      'left_lower_diag_adj', 
+                      'right_upper_diag_adj', 
+                      'right_lower_diag_adj']
+    
+    adj_vals = {
+        'left_adj':[],
+        'right_adj':[],
+        'up_adj':[],
+        'down_adj':[],
+        'left_upper_diag_adj':[],
+        'left_lower_diag_adj':[],
+        'right_upper_diag_adj':[],
+        'right_lower_diag_adj':[]
+    }
+    
+    
+    # This dictionaary hold all row coordinates for specific adjacent directions
+    adj_row_coord = {
+        'left_adj':[row, row, row],
+        'right_adj':[row, row, row],
+        'up_adj':[row-1, row-2, row-3],
+        'down_adj':[row+1, row+2, row+3],
+        'left_upper_diag_adj':[row-1, row-2, row-1],
+        'left_lower_diag_adj':[row+1, row+2, row+3],
+        'right_upper_diag_adj':[row+1, row+2, row+3],
+        'right_lower_diag_adj':[row-1, row-2, row-3]
+    }
+    
+    # This dictionaary hold all column coordinates for specific adjacent directions
+    adj_col_coord = {
+        'left_adj':[col-2, col-3, col-4],
+        'right_adj':[col+2, col+3, col+4],
+        'up_adj':[col, col, col],
+        'down_adj':[col, col, col],
+        'left_upper_diag_adj':[col-1, col-2, col-3],
+        'left_lower_diag_adj':[col-1, col-2, col-3],
+        'right_upper_diag_adj':[col+1, col+2, col+3],
+        'right_lower_diag_adj':[col+1, col+2, col+3]
+    }
+    
+    # If any adjacent direction coordinates contains a row coordinate < 0 or row coordinate > no. of rows in the matrix 
+    # or contains column coordinates < 0 or column coordinates > no. of rows in the matrix must be remove from 
+    # adj_vals, adj_row_coord, adj_column_coord dictionaries
+    for i in range(0, len(adj_directions)):
+        for j in range(0, 3):
+            if (adj_col_coord[adj_directions[i]][j] < 0) | (adj_col_coord[adj_directions[i]][j] > no_of_cols) | (adj_row_coord[adj_directions[i]][j] < 0) | (adj_row_coord[adj_directions[i]][j] > no_of_cols):
+                del adj_vals[adj_directions[i]]
+                del adj_col_coord[adj_directions[i]]
+                del adj_row_coord[adj_directions[i]]
+                break
+    
+    # Append the values (based on their row and column coordinates) to the correct adjacent directions
+    for key in adj_vals:
+        adj_vals[key].append(matrix[adj_row_coord[key][0], adj_col_coord[key][0]])
+        adj_vals[key].append(matrix[adj_row_coord[key][1], adj_col_coord[key][1]])
+        adj_vals[key].append(matrix[adj_row_coord[key][2], adj_col_coord[key][2]])
+        
+    # Find the adjecnt direction values that have the highest combined product value
+    for key in adj_vals:
+        if adj_vals[key][0]*adj_vals[key][1]*adj_vals[key][2] > highest_prod:
+            highest_prod = adj_vals[key][0]*adj_vals[key][1]*adj_vals[key][2]
+            adj_direction = key
+    
+    return highest_prod, adj_direction, adj_vals
+
+solution = highest_adj_product(default_matrix, 3, 5)
+
+# Question 1 Answer
+print("There are "+str(len(solution[2]))+" combinations of three adjacent numbers: "+str(solution[2]))
+print(' ')
+
+# Question 2 Answer
+print("The adjacent direction with the highest product value is "+solution[1]+" with a value of "+str(solution[0]))
