@@ -13,8 +13,8 @@ default_matrix = np.mat([[8,2,22,97,38,15,0,40,0,75],
                          [24,55,58,5,66,73,99,26,97,17],
                          [21,36,23,9,75,0,76,44,20,45]])
 
-# Creates matrices filled with random numbers from 0 to 99 of tehj desired dimensions
-# Simple input the number of columns and the number of rows you want
+# Creates matrices filled with random numbers from 0 to 99 of the desired dimensions
+# Simply input the number of columns and the number of rows you want
 def matrix_creator(no_of_cols, no_of_rows):
     matrix = []
     for n in range(0, no_of_cols):
@@ -33,11 +33,13 @@ def matrix_creator(no_of_cols, no_of_rows):
 # matrix = matrix used to find adjacent values in groups of 3
 # row = row coordinate of 2nd value of the starting sequence
 # col = column coordinate of 2nd value of the starting sequence
-def highest_adj_product(matrix, row, col):
+# no_of_rows = number of rows in the matrix used
+# no_of_cols = number of columns used in the matrix
+def highest_adj_product(matrix, no_of_rows, no_of_cols, row, col):
     
     highest_prod = 0
     adj_direction = ""
-    start_pos = [sample[row, col-1], sample[row, col], sample[row, col+1]]
+    start_pos = [matrix[row, col-1], matrix[row, col], matrix[row, col+1]]
     
     adj_directions = ['left_adj', 
                       'right_adj', 
@@ -60,19 +62,19 @@ def highest_adj_product(matrix, row, col):
     }
     
     
-    # This dictionaary hold all row coordinates for specific adjacent directions
+    # This dictionary hold all row coordinates for specific adjacent directions
     adj_row_coord = {
         'left_adj':[row, row, row],
         'right_adj':[row, row, row],
         'up_adj':[row-1, row-2, row-3],
         'down_adj':[row+1, row+2, row+3],
-        'left_upper_diag_adj':[row-1, row-2, row-1],
+        'left_upper_diag_adj':[row-1, row-2, row-3],
         'left_lower_diag_adj':[row+1, row+2, row+3],
-        'right_upper_diag_adj':[row+1, row+2, row+3],
-        'right_lower_diag_adj':[row-1, row-2, row-3]
+        'right_lower_diag_adj':[row+1, row+2, row+3],
+        'right_upper_diag_adj':[row-1, row-2, row-3]
     }
     
-    # This dictionaary hold all column coordinates for specific adjacent directions
+    # This dictionary hold all column coordinates for specific adjacent directions
     adj_col_coord = {
         'left_adj':[col-2, col-3, col-4],
         'right_adj':[col+2, col+3, col+4],
@@ -80,8 +82,8 @@ def highest_adj_product(matrix, row, col):
         'down_adj':[col, col, col],
         'left_upper_diag_adj':[col-1, col-2, col-3],
         'left_lower_diag_adj':[col-1, col-2, col-3],
-        'right_upper_diag_adj':[col+1, col+2, col+3],
-        'right_lower_diag_adj':[col+1, col+2, col+3]
+        'right_lower_diag_adj':[col+1, col+2, col+3],
+        'right_upper_diag_adj':[col+1, col+2, col+3]
     }
     
     # If any adjacent direction coordinates contains a row coordinate < 0 or row coordinate > no. of rows in the matrix 
@@ -109,7 +111,7 @@ def highest_adj_product(matrix, row, col):
     
     return highest_prod, adj_direction, adj_vals
 
-solution = highest_adj_product(default_matrix, 3, 5)
+solution = highest_adj_product(default_matrix, 10, 10, 3, 5)
 
 # Question 1 Answer
 print("There are "+str(len(solution[2]))+" combinations of three adjacent numbers: "+str(solution[2]))
